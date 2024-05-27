@@ -9,7 +9,6 @@ export class DemoController {
   @MessagePattern('hello')
   getHello(): string {
     console.log('hello');
-
     return this.demoService.getHello();
   }
 }
