@@ -12,3 +12,138 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id            Int            @id @default(autoincrement())
+  firstname     String
+  lastname      String
+  username      String         @unique
+  email         String         @unique
+  passwordHash  String
+  refreshToken  String
+  roles         Role[]         @default([USER])
+  avatar        Avatar?
+  orders        Order[]
+  cart          Cart?
+  feedbacks     Feedback[]
+  likedProducts LikedProduct[]
+  createdAt     DateTime
+  updatedAt     DateTime
+}
+
+model Avatar {
+  id     Int  @id @default(autoincrement())
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId Int  @unique
+}
+
+model Product {
+  id             Int               @id @default(autoincrement())
+  name           String            @unique
+  price          Decimal
+  unit           Unit
+  carts          ProductsOnCarts[]
+  feedbacks      Feedback[]
+  ProductOnOrder ProductOnOrder[]
+  likes          LikedProduct[]
+  createdAt      DateTime
+  updatedAt      DateTime
+}
+
+model Cart {
+  id        Int               @id @default(autoincrement())
+  userId    Int               @unique
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  products  ProductsOnCarts[]
+  createdAt DateTime
+  updatedAt DateTime
+}
+
+model Order {
+  id             Int              @id @default(autoincrement())
+  userId         Int
+  user           User             @relation(fields: [userId], references: [id], onDelete: SetDefault, onUpdate: Cascade)
+  total          Decimal
+  type           OrderType
+  payment        Payment
+  ProductOnOrder ProductOnOrder[]
+  Table          Table?           @relation(fields: [tableId], references: [id], onDelete: SetDefault, onUpdate: Cascade)
+  tableId        Int?
+  createdAt      DateTime
+  updatedAt      DateTime
+}
+
+model Feedback {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: SetDefault, onUpdate: Cascade)
+  score     Int
+  comment   String
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime
+  updatedAt DateTime
+}
+
+model Table {
+  id       Int     @id @default(autoincrement())
+  name     String
+  occupied Boolean
+
+  orders Order[]
+}
+
+model ProductsOnCarts {
+  id        Int     @id @default(autoincrement())
+  cartId    Int
+  cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  productId Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  quantity  Int
+}
+
+model LikedProduct {
+  id        Int     @id @default(autoincrement())
+  userId    Int
+  user      User    @relation(fields: [userId], references: [id])
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+model ProductOnOrder {
+  id        Int     @id @default(autoincrement())
+  orderId   Int
+  order     Order   @relation(fields: [orderId], references: [id])
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Float
+}
+
+enum OrderType {
+  DELIVERY
+  PICKUP
+  PLACE
+}
+
+enum Payment {
+  CASH
+  CARD
+  CREDIT
+}
+
+enum Role {
+  SUPERADMIN
+  USER
+  ADMIN
+  WAITER
+  EMPLOYEE
+  CUSTOMER
+  MODERATOR
+}
+
+enum Unit {
+  KILO
+  PIECE
+  PORTION
+  LITER
+}
