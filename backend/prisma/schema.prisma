@@ -15,48 +15,69 @@ datasource db {
 
 model User {
   id            Int            @id @default(autoincrement())
-  firstname     String
-  lastname      String
+  firstname     String?
+  lastname      String?
   username      String         @unique
   email         String         @unique
   passwordHash  String
   refreshToken  String
+  verified      Boolean        @default(false)
   roles         Role[]         @default([USER])
   avatar        Avatar?
   orders        Order[]
   cart          Cart?
   feedbacks     Feedback[]
   likedProducts LikedProduct[]
-  createdAt     DateTime
-  updatedAt     DateTime
+  createdAt     DateTime?      @default(now())
+  updatedAt     DateTime?
+
+  @@map("users")
 }
 
 model Avatar {
-  id     Int  @id @default(autoincrement())
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId Int  @unique
+  id     Int    @id @default(autoincrement())
+  src    String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId Int    @unique
+
+  @@map("avatars")
 }
 
 model Product {
-  id             Int               @id @default(autoincrement())
-  name           String            @unique
+  id             Int              @id @default(autoincrement())
+  name           String           @unique
   price          Decimal
+  description    String?
   unit           Unit
-  carts          ProductsOnCarts[]
+  carts          ProductOnCart[]
   feedbacks      Feedback[]
   ProductOnOrder ProductOnOrder[]
   likes          LikedProduct[]
-  createdAt      DateTime
-  updatedAt      DateTime
+  createdAt      DateTime?        @default(now())
+  updatedAt      DateTime?        @default(now())
+  category       Category         @relation(fields: [categoryId], references: [id])
+  categoryId     Int
+
+  @@map("products")
+}
+
+model Category {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  products Product[]
+
+  @@map("categories")
 }
 
 model Cart {
-  id        Int               @id @default(autoincrement())
-  userId    Int               @unique
-  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  products  ProductsOnCarts[]
-  createdAt DateTime
-  updatedAt DateTime
+  id        Int             @id @default(autoincrement())
+  userId    Int             @unique
+  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  products  ProductOnCart[]
+  createdAt DateTime?       @default(now())
+  updatedAt DateTime?
+
+  @@map("carts")
 }
 
 model Order {
@@ -69,37 +90,44 @@ model Order {
   ProductOnOrder ProductOnOrder[]
   Table          Table?           @relation(fields: [tableId], references: [id], onDelete: SetDefault, onUpdate: Cascade)
   tableId        Int?
-  createdAt      DateTime
-  updatedAt      DateTime
+  createdAt      DateTime?        @default(now())
+  updatedAt      DateTime?        @default(now())
+
+  @@map("orders")
 }
 
 model Feedback {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   userId    Int
-  user      User     @relation(fields: [userId], references: [id], onDelete: SetDefault, onUpdate: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: SetDefault, onUpdate: Cascade)
   score     Int
   comment   String
   productId Int
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  createdAt DateTime
-  updatedAt DateTime
+  product   Product   @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime? @default(now())
+  updatedAt DateTime?
+
+  @@map("feedbacks")
 }
 
 model Table {
   id       Int     @id @default(autoincrement())
   name     String
   occupied Boolean
+  orders   Order[]
 
-  orders Order[]
+  @@map("tables")
 }
 
-model ProductsOnCarts {
+model ProductOnCart {
   id        Int     @id @default(autoincrement())
   cartId    Int
   cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   productId Int
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   quantity  Int
+
+  @@map("products_on_carts")
 }
 
 model LikedProduct {
@@ -108,6 +136,8 @@ model LikedProduct {
   user      User    @relation(fields: [userId], references: [id])
   productId Int
   product   Product @relation(fields: [productId], references: [id])
+
+  @@map("liked_products")
 }
 
 model ProductOnOrder {
@@ -117,6 +147,8 @@ model ProductOnOrder {
   productId Int
   product   Product @relation(fields: [productId], references: [id])
   quantity  Float
+
+  @@map("products_on_orders")
 }
 
 enum OrderType {

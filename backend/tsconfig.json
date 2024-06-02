@@ -17,6 +17,13 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-    "paths": {}
+    "paths": {
+      "general/general": [
+        "libs/general/src"
+      ],
+      "general/general/*": [
+        "libs/general/src/*"
+      ]
+    }
   }
 }

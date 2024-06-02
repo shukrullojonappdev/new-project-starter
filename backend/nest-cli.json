@@ -36,6 +36,24 @@
       "compilerOptions": {
         "tsConfigPath": "apps/auth/tsconfig.app.json"
       }
+    },
+    "invertarization": {
+      "type": "application",
+      "root": "apps/invertarization",
+      "entryFile": "main",
+      "sourceRoot": "apps/invertarization/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/invertarization/tsconfig.app.json"
+      }
+    },
+    "general": {
+      "type": "library",
+      "root": "libs/general",
+      "entryFile": "index",
+      "sourceRoot": "libs/general/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/general/tsconfig.lib.json"
+      }
     }
   }
 }
