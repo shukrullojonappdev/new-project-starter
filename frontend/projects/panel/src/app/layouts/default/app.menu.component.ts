@@ -24,6 +24,26 @@ export class AppMenuComponent implements OnInit {
                 ],
             },
             {
+                label: 'Invertarization',
+                items: [
+                    {
+                        label: 'Categories',
+                        icon: 'pi pi-fw pi-home',
+                        routerLink: ['/categories'],
+                    },
+                    {
+                        label: 'Products',
+                        icon: 'pi pi-fw pi-home',
+                        routerLink: ['/products'],
+                    },
+                    {
+                        label: 'Tables',
+                        icon: 'pi pi-fw pi-home',
+                        routerLink: ['/tables'],
+                    },
+                ],
+            },
+            {
                 label: 'Prime Blocks',
                 items: [
                     {

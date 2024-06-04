@@ -16,6 +16,7 @@ import { AppConfigModule } from './config/config.module';
 import { AppSidebarComponent } from './app.sidebar.component';
 import { AppLayoutComponent } from './app.layout.component';
 import { CommonModule } from '@angular/common';
+import { AppLayoutRoutingModule } from './app.layout-route.module';
 
 @NgModule({
     declarations: [
@@ -36,9 +37,9 @@ import { CommonModule } from '@angular/common';
         RadioButtonModule,
         InputSwitchModule,
         RippleModule,
-        RouterModule.forChild([{ path: '', component: AppLayoutComponent }]),
+        AppLayoutRoutingModule,
         AppConfigModule,
     ],
-    exports: [AppLayoutComponent, RouterModule],
+    exports: [],
 })
 export class AppLayoutModule {}

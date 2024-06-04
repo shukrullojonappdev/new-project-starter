@@ -53,6 +53,7 @@ model Product {
   feedbacks      Feedback[]
   ProductOnOrder ProductOnOrder[]
   likes          LikedProduct[]
+  status          ProductStatus
   createdAt      DateTime?        @default(now())
   updatedAt      DateTime?        @default(now())
   category       Category         @relation(fields: [categoryId], references: [id])
@@ -171,6 +172,12 @@ enum Role {
   EMPLOYEE
   CUSTOMER
   MODERATOR
+}
+
+enum ProductStatus {
+  INSTOCK
+  LOWSTOCK
+  OUTOFSTOCK
 }
 
 enum Unit {
